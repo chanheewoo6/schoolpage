@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데이터베이스 초기화 - 넘버원 자두반 HELPER</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #aee1f9;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #8cc8e6;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>데이터베이스 초기화</h1>
+    <p>이 페이지는 데이터베이스를 초기화하는 페이지입니다. 초기화하면 모든 데이터가 초기 상태로 돌아갑니다.</p>
+    <button onclick="initializeDB()">데이터베이스 초기화</button>
+    <div id="status"></div>
+
+    <script src="init-db.js"></script>
+    <script>
+        function initializeDB() {
+            try {
+                initializeDatabase();
+                document.getElementById('status').className = 'success';
+                document.getElementById('status').textContent = '데이터베이스가 성공적으로 초기화되었습니다.';
+            } catch (error) {
+                document.getElementById('status').className = 'error';
+                document.getElementById('status').textContent = '오류가 발생했습니다: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html> 

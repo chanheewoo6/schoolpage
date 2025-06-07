@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>출석 현황 - 선생님</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>출석 현황 (선생님)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <h4>오늘 미출석 학생</h4>
+      <span id="notAttend"></span>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'teacher') {
+      window.location.href = '../login.html';
+    }
+    // 학생 목록
+    const students = [
+      "고하준", "김도현", "김민채", "김준우", "김찬우", "문서호", "박시연", "박시윤",
+      "성윤우", "신재인", "우찬희", "윤연제", "이다나", "이도윤", "이서아",
+      "이연우", "임수호", "정서윤", "정서진", "조주원", "주현우",
+      "지소율", "최예원", "최지우", "최환준", "황혜원"
+    ];
+    // 출석 데이터
+    const today = new Date().toISOString().slice(0, 10);
+    let attendance = JSON.parse(localStorage.getItem('attendance')) || {};
+    if (!attendance[today]) attendance[today] = {};
+    // 미출석 학생 집계
+    const notAttend = students.filter(name => !attendance[today][name]);
+    document.getElementById('notAttend').textContent = notAttend.length ? notAttend.join(', ') : '없음';
+  </script>
+</body>
+</html> 

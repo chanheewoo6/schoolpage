@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>넘버원 자두반 HELPER - 학생</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h3>넘버원 자두반 HELPER (학생)</h3>
+    <p id="date"></p>
+    <div id="userInfo" style="text-align: right; margin-top: 10px;">
+      <span id="userName"></span>
+      <button onclick="logout()" style="margin-left: 10px;">로그아웃</button>
+    </div>
+  </header>
+  <main>
+    <div class="grid">
+      <a href="homework.html" class="card">숙제 체크</a>
+      <a href="peoplecheck.html" class="card">출석 체크</a>
+      <a href="todo.html" class="card">오늘의 할일</a>
+      <a href="subject.html" class="card">오늘의 과목</a>
+      <a href="vote.html" class="card">투표하기</a>
+      <a href="library.html" class="card">자료실</a>
+      <a href="suggestion.html" class="card">칭찬/건의함</a>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 보평초 6-1</p>
+  </footer>
+  <script>
+    // 로그인 체크
+    function checkLogin() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser || currentUser.role !== 'student') {
+        window.location.href = '../login.html';
+        return;
+      }
+      document.getElementById('userName').textContent = `${currentUser.name} (${currentUser.role})`;
+    }
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = '../login.html';
+    }
+    // 날짜 표시
+    const dateElement = document.getElementById('date');
+    const date = new Date();
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+    };
+    dateElement.textContent = date.toLocaleDateString('ko-KR', options);
+    checkLogin();
+  </script>
+</body>
+</html> 

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>출석 체크 - 학생</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>출석 체크 (학생)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <h4 id="studentName"></h4>
+      <form id="attendanceForm">
+        <label><input type="checkbox" id="attend"> 오늘 출석</label><br>
+        <button type="submit">저장</button>
+      </form>
+      <div id="saveMsg"></div>
+    </div>
+    <div class="card">
+      <h4>오늘 출석 인원</h4>
+      <span id="count">0</span>명
+    </div>
+  </main>
+  <script>
+    // 로그인 체크 및 학생 정보 표시
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'student') {
+      window.location.href = '../login.html';
+    }
+    document.getElementById('studentName').textContent = `${currentUser.name} (${currentUser.id || ''})`;
+
+    // 출석 데이터 불러오기
+    const today = new Date().toISOString().slice(0, 10);
+    let attendance = JSON.parse(localStorage.getItem('attendance')) || {};
+    if (!attendance[today]) attendance[today] = {};
+    if (attendance[today][currentUser.name] === undefined) attendance[today][currentUser.name] = false;
+
+    // 체크박스 상태 반영
+    document.getElementById('attend').checked = attendance[today][currentUser.name];
+
+    // 저장 이벤트
+    document.getElementById('attendanceForm').onsubmit = function(e) {
+      e.preventDefault();
+      attendance[today][currentUser.name] = document.getElementById('attend').checked;
+      localStorage.setItem('attendance', JSON.stringify(attendance));
+      document.getElementById('saveMsg').textContent = '저장되었습니다!';
+      updateCount();
+    };
+
+    // 출석 인원 집계
+    function updateCount() {
+      let count = 0;
+      for (const student in attendance[today]) {
+        if (attendance[today][student]) count++;
+      }
+      document.getElementById('count').textContent = count;
+    }
+    updateCount();
+  </script>
+</body>
+</html> 

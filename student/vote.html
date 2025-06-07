@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>투표하기 - 학생</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>투표하기 (학생)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <form id="voteForm">
+        <input type="text" id="voteInput" placeholder="투표 주제를 입력하세요" required>
+        <button type="submit">주제 추가</button>
+      </form>
+      <ul id="voteList"></ul>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'student') {
+      window.location.href = '../login.html';
+    }
+    let votes = JSON.parse(localStorage.getItem('votes')) || {};
+    function saveVotes() {
+      localStorage.setItem('votes', JSON.stringify(votes));
+    }
+    function renderVotes() {
+      const list = document.getElementById('voteList');
+      list.innerHTML = '';
+      Object.keys(votes).forEach((topic, idx) => {
+        const agree = votes[topic].agree ? votes[topic].agree.length : 0;
+        const disagree = votes[topic].disagree ? votes[topic].disagree.length : 0;
+        const voted = (votes[topic].agree && votes[topic].agree.includes(currentUser.name)) || (votes[topic].disagree && votes[topic].disagree.includes(currentUser.name));
+        list.innerHTML += `<li>${topic} <br>찬성: ${agree}명, 반대: ${disagree}명 <br>
+          <button onclick="vote('${topic}', true)" ${voted ? 'disabled' : ''}>찬성</button>
+          <button onclick="vote('${topic}', false)" ${voted ? 'disabled' : ''}>반대</button>
+          </li>`;
+      });
+    }
+    window.vote = function(topic, isAgree) {
+      if (!votes[topic].agree) votes[topic].agree = [];
+      if (!votes[topic].disagree) votes[topic].disagree = [];
+      if (isAgree) {
+        if (!votes[topic].agree.includes(currentUser.name) && !votes[topic].disagree.includes(currentUser.name)) {
+          votes[topic].agree.push(currentUser.name);
+        }
+      } else {
+        if (!votes[topic].agree.includes(currentUser.name) && !votes[topic].disagree.includes(currentUser.name)) {
+          votes[topic].disagree.push(currentUser.name);
+        }
+      }
+      saveVotes();
+      renderVotes();
+    }
+    document.getElementById('voteForm').onsubmit = function(e) {
+      e.preventDefault();
+      const topic = document.getElementById('voteInput').value.trim();
+      if (topic && !votes[topic]) {
+        votes[topic] = { agree: [], disagree: [] };
+        saveVotes();
+        renderVotes();
+        this.reset();
+      }
+    }
+    renderVotes();
+  </script>
+</body>
+</html> 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>넘버원 자두반 HELPER</title>
+  <script>
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+      window.location.href = 'login.html';
+    } else if (currentUser.role === 'student') {
+      window.location.href = 'student/index.html';
+    } else if (currentUser.role === 'teacher') {
+      window.location.href = 'teacher/index.html';
+    } else {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body style="background:#f1f9ff;">
+  <noscript>
+    <h2>이 사이트는 자바스크립트가 필요합니다.</h2>
+  </noscript>
+</body>
+</html>

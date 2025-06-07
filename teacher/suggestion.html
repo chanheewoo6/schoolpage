@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>칭찬/건의함 - 선생님</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>칭찬/건의함 (선생님)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <form id="suggestionForm">
+        <input type="text" id="suggestionInput" placeholder="칭찬 또는 건의 내용을 입력하세요" required>
+        <button type="submit">등록</button>
+      </form>
+      <ul id="suggestionList"></ul>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'teacher') {
+      window.location.href = '../login.html';
+    }
+    let suggestions = JSON.parse(localStorage.getItem('suggestions')) || [];
+    function saveSuggestions() {
+      localStorage.setItem('suggestions', JSON.stringify(suggestions));
+    }
+    function renderSuggestions() {
+      const list = document.getElementById('suggestionList');
+      list.innerHTML = '';
+      suggestions.forEach((item, idx) => {
+        list.innerHTML += `<li>${item.text} <span style='color:#888'>(by ${item.user})</span> <button onclick='deleteSuggestion(${idx})'>삭제</button></li>`;
+      });
+    }
+    window.deleteSuggestion = function(idx) {
+      suggestions.splice(idx, 1);
+      saveSuggestions();
+      renderSuggestions();
+    }
+    document.getElementById('suggestionForm').onsubmit = function(e) {
+      e.preventDefault();
+      const text = document.getElementById('suggestionInput').value.trim();
+      if (text) {
+        suggestions.push({ text, user: currentUser.name });
+        saveSuggestions();
+        renderSuggestions();
+        this.reset();
+      }
+    }
+    renderSuggestions();
+  </script>
+</body>
+</html> 

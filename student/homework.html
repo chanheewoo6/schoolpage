@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>숙제 체크 - 학생</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>숙제 체크 (학생)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <h4 id="studentName"></h4>
+      <form id="homeworkForm">
+        <label><input type="checkbox" id="hw1"> 살글</label><br>
+        <label><input type="checkbox" id="hw2"> 느티나무</label><br>
+        <label><input type="checkbox" id="hw3"> 꿈자람</label><br>
+        <button type="submit">저장</button>
+      </form>
+      <div id="saveMsg"></div>
+    </div>
+    <div class="card">
+      <h4>숙제 완료 인원</h4>
+      <ul>
+        <li>살글: <span id="count1">0</span>명</li>
+        <li>느티나무: <span id="count2">0</span>명</li>
+        <li>꿈자람: <span id="count3">0</span>명</li>
+      </ul>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크 및 학생 정보 표시
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'student') {
+      window.location.href = '../login.html';
+    }
+    document.getElementById('studentName').textContent = `${currentUser.name} (${currentUser.id || ''})`;
+
+    // 숙제 데이터 불러오기
+    const today = new Date().toISOString().slice(0, 10);
+    let homework = JSON.parse(localStorage.getItem('homework')) || {};
+    if (!homework[today]) homework[today] = {};
+    if (!homework[today][currentUser.name]) homework[today][currentUser.name] = [false, false, false];
+
+    // 체크박스 상태 반영
+    const [hw1, hw2, hw3] = homework[today][currentUser.name];
+    document.getElementById('hw1').checked = hw1;
+    document.getElementById('hw2').checked = hw2;
+    document.getElementById('hw3').checked = hw3;
+
+    // 저장 이벤트
+    document.getElementById('homeworkForm').onsubmit = function(e) {
+      e.preventDefault();
+      homework[today][currentUser.name] = [
+        document.getElementById('hw1').checked,
+        document.getElementById('hw2').checked,
+        document.getElementById('hw3').checked
+      ];
+      localStorage.setItem('homework', JSON.stringify(homework));
+      document.getElementById('saveMsg').textContent = '저장되었습니다!';
+      updateCounts();
+    };
+
+    // 완료 인원 집계
+    function updateCounts() {
+      let count1 = 0, count2 = 0, count3 = 0;
+      for (const student in homework[today]) {
+        if (homework[today][student][0]) count1++;
+        if (homework[today][student][1]) count2++;
+        if (homework[today][student][2]) count3++;
+      }
+      document.getElementById('count1').textContent = count1;
+      document.getElementById('count2').textContent = count2;
+      document.getElementById('count3').textContent = count3;
+    }
+    updateCounts();
+  </script>
+</body>
+</html>

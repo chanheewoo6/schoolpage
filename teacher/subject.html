@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 과목 - 선생님</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>오늘의 과목 (선생님)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <form id="subjectForm">
+        <input type="text" id="subjectInput" placeholder="과목을 입력하세요" required>
+        <button type="submit">추가</button>
+      </form>
+      <ul id="subjectList"></ul>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'teacher') {
+      window.location.href = '../login.html';
+    }
+    // 오늘 날짜
+    const today = new Date().toISOString().slice(0, 10);
+    let subjectsData = JSON.parse(localStorage.getItem('subjects_today')) || {};
+    // 날짜가 다르면 초기화
+    if (!subjectsData.date || subjectsData.date !== today) {
+      subjectsData = { date: today, subjects: [] };
+      localStorage.setItem('subjects_today', JSON.stringify(subjectsData));
+    }
+    function saveSubjects() {
+      localStorage.setItem('subjects_today', JSON.stringify(subjectsData));
+    }
+    function renderSubjects() {
+      const list = document.getElementById('subjectList');
+      list.innerHTML = '';
+      subjectsData.subjects.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${item} <button onclick='deleteSubject(${idx})'>삭제</button>`;
+        list.appendChild(li);
+      });
+    }
+    window.deleteSubject = function(idx) {
+      subjectsData.subjects.splice(idx, 1);
+      saveSubjects();
+      renderSubjects();
+    }
+    document.getElementById('subjectForm').onsubmit = function(e) {
+      e.preventDefault();
+      const text = document.getElementById('subjectInput').value.trim();
+      if (text) {
+        subjectsData.subjects.push(text);
+        saveSubjects();
+        renderSubjects();
+        this.reset();
+      }
+    }
+    renderSubjects();
+  </script>
+</body>
+</html> 

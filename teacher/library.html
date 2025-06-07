@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>자료실 - 선생님</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>자료실 (선생님)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <form id="libraryForm">
+        <input type="text" id="libraryInput" placeholder="자료 링크 또는 설명을 입력하세요" required>
+        <button type="submit">업로드</button>
+      </form>
+      <ul id="libraryList"></ul>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'teacher') {
+      window.location.href = '../login.html';
+    }
+    let library = JSON.parse(localStorage.getItem('library')) || [];
+    function saveLibrary() {
+      localStorage.setItem('library', JSON.stringify(library));
+    }
+    function renderLibrary() {
+      const list = document.getElementById('libraryList');
+      list.innerHTML = '';
+      library.forEach((item, idx) => {
+        list.innerHTML += `<li>${item.text} <span style='color:#888'>(by ${item.user})</span> <button onclick='deleteLibrary(${idx})'>삭제</button></li>`;
+      });
+    }
+    window.deleteLibrary = function(idx) {
+      library.splice(idx, 1);
+      saveLibrary();
+      renderLibrary();
+    }
+    document.getElementById('libraryForm').onsubmit = function(e) {
+      e.preventDefault();
+      const text = document.getElementById('libraryInput').value.trim();
+      if (text) {
+        library.push({ text, user: currentUser.name });
+        saveLibrary();
+        renderLibrary();
+        this.reset();
+      }
+    }
+    renderLibrary();
+  </script>
+</body>
+</html> 

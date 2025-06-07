@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+
+body {
+  background: #f1f9ff;
+  font-family: 'Noto Sans KR', 'Gaegu', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #aee1f9;
+  padding: 24px 0 16px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 0 0 24px 24px;
+}
+header h3 {
+  font-family: 'Gaegu', cursive;
+  font-size: 2.2em;
+  color: #2d4059;
+  margin: 0;
+  letter-spacing: 2px;
+}
+header p {
+  color: #555;
+  margin: 8px 0 0 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin: 32px 0;
+}
+.card, a.card {
+  background: linear-gradient(135deg, #e0f7fa 60%, #aee1f9 100%);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 32px 20px 24px 20px;
+  text-align: center;
+  transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+  font-family: 'Gaegu', cursive;
+  font-size: 1.35em;
+  color: #2d4059;
+  text-decoration: none;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  display: block;
+}
+.card:hover, a.card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+  background: linear-gradient(135deg, #aee1f9 60%, #e0f7fa 100%);
+  color: #1976d2;
+  transform: translateY(-4px) scale(1.03);
+  text-decoration: none;
+}
+.card h4 {
+  margin-top: 0;
+  color: #2d4059;
+  font-family: 'Gaegu', cursive;
+}
+
+input[type="text"], input[type="password"], input[type="number"] {
+  width: 90%;
+  padding: 10px;
+  margin: 8px 0 16px 0;
+  border: 2px solid #aee1f9;
+  border-radius: 8px;
+  font-size: 1em;
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #fafdff;
+  transition: border 0.2s;
+}
+input:focus {
+  border: 2px solid #2d4059;
+  outline: none;
+}
+
+button {
+  background: #aee1f9;
+  color: #2d4059;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #8cc8e6;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+ul li {
+  background: #fafdff;
+  margin: 8px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  font-size: 1em;
+  text-align: left;
+}
+
+footer {
+  text-align: center;
+  color: #888;
+  font-size: 0.95em;
+  margin: 40px 0 10px 0;
+}
+
+#userInfo {
+  text-align: right;
+  margin: 0 24px 0 0;
+  font-size: 1em;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .card {
+    padding: 18px 8px 14px 8px;
+  }
+  header {
+    padding: 16px 0 10px 0;
+  }
+} 

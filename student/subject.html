@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 과목 - 학생</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>오늘의 과목 (학생)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <ul id="subjectList"></ul>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'student') {
+      window.location.href = '../login.html';
+    }
+    // 오늘의 과목 데이터 읽기
+    const subjectsData = JSON.parse(localStorage.getItem('subjects_today')) || { subjects: [] };
+    function renderSubjects() {
+      const list = document.getElementById('subjectList');
+      list.innerHTML = '';
+      if (!subjectsData.subjects.length) {
+        list.innerHTML = '<li>오늘의 과목이 아직 등록되지 않았습니다.</li>';
+      } else {
+        subjectsData.subjects.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          list.appendChild(li);
+        });
+      }
+    }
+    renderSubjects();
+  </script>
+</body>
+</html> 

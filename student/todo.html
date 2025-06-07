@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 할일 - 학생</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <h3>오늘의 할일 (학생)</h3>
+    <button onclick="location.href='index.html'">메인으로</button>
+  </header>
+  <main>
+    <div class="card">
+      <form id="todoForm">
+        <input type="text" id="todoInput" placeholder="할일을 입력하세요" required>
+        <button type="submit">추가</button>
+      </form>
+      <ul id="todoList"></ul>
+    </div>
+  </main>
+  <script>
+    // 로그인 체크
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'student') {
+      window.location.href = '../login.html';
+    }
+    // 오늘 날짜별로 저장
+    const today = new Date().toISOString().slice(0, 10);
+    let todos = JSON.parse(localStorage.getItem('todos')) || {};
+    if (!todos[today]) todos[today] = {};
+    if (!todos[today][currentUser.name]) todos[today][currentUser.name] = [];
+
+    function saveTodos() {
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+    function renderTodos() {
+      const list = document.getElementById('todoList');
+      list.innerHTML = '';
+      todos[today][currentUser.name].forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<input type='checkbox' ${item.done ? 'checked' : ''} onchange='toggleDone(${idx})'> ${item.text} <button onclick='deleteTodo(${idx})'>삭제</button>`;
+        list.appendChild(li);
+      });
+    }
+    window.toggleDone = function(idx) {
+      todos[today][currentUser.name][idx].done = !todos[today][currentUser.name][idx].done;
+      saveTodos();
+      renderTodos();
+    }
+    window.deleteTodo = function(idx) {
+      todos[today][currentUser.name].splice(idx, 1);
+      saveTodos();
+      renderTodos();
+    }
+    document.getElementById('todoForm').onsubmit = function(e) {
+      e.preventDefault();
+      const text = document.getElementById('todoInput').value.trim();
+      if (text) {
+        todos[today][currentUser.name].push({ text, done: false });
+        saveTodos();
+        renderTodos();
+        this.reset();
+      }
+    }
+    renderTodos();
+  </script>
+</body>
+</html> 

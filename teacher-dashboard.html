@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선생님 대시보드 - 넘버원 자두반 HELPER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f1f9ff;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #aee1f9;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin: 0;
+            color: #333;
+            font-family: 'Gaegu', cursive;
+            font-size: 2em;
+        }
+
+        .welcome-message {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #333;
+            font-family: 'Gaegu', cursive;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #aee1f9;
+            border-radius: 8px;
+            font-family: 'Noto Sans KR', sans-serif;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #aee1f9;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #8cc8e6;
+        }
+
+        .account-list {
+            margin-top: 20px;
+        }
+
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .account-item:last-child {
+            border-bottom: none;
+        }
+
+        .delete-btn {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            color: #333;
+            background-color: #aee1f9;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>선생님 대시보드</h2>
+        <p class="welcome-message" id="welcomeMessage"></p>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- 학생 계정 생성 카드 -->
+            <div class="card">
+                <h3>학생 계정 생성</h3>
+                <form id="createStudentForm">
+                    <div class="form-group">
+                        <label for="studentId">학번</label>
+                        <input type="text" id="studentId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentName">이름</label>
+                        <input type="text" id="studentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentPassword">비밀번호</label>
+                        <input type="password" id="studentPassword" required>
+                    </div>
+                    <button type="submit">계정 생성</button>
+                </form>
+            </div>
+
+            <!-- 학부모 계정 생성 카드 -->
+            <div class="card">
+                <h3>학부모 계정 생성</h3>
+                <form id="createParentForm">
+                    <div class="form-group">
+                        <label for="parentId">아이디</label>
+                        <input type="text" id="parentId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="parentName">이름</label>
+                        <input type="text" id="parentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="parentPassword">비밀번호</label>
+                        <input type="password" id="parentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentSelect">자녀 선택</label>
+                        <select id="studentSelect" required>
+                            <option value="">자녀를 선택하세요</option>
+                        </select>
+                    </div>
+                    <button type="submit">계정 생성</button>
+                </form>
+            </div>
+
+            <!-- 계정 목록 카드 -->
+            <div class="card">
+                <h3>계정 목록</h3>
+                <div class="account-list" id="accountList">
+                    <!-- 계정 목록이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn">메인 페이지로</a>
+            <a href="login.html" class="nav-btn" onclick="logout()">로그아웃</a>
+        </div>
+    </div>
+
+    <script>
+        // 현재 로그인한 사용자 확인
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser || currentUser.role !== 'teacher') {
+            window.location.href = 'login.html';
+        }
+
+        // 환영 메시지 표시
+        document.getElementById('welcomeMessage').textContent = `${currentUser.name}님, 환영합니다!`;
+
+        // 학생 목록 정의
+        const students = [
+            "1 고하준", "2 김도현", "3 김민채", "4 김준우", "5 김찬우", "6 문서호", "7 박시연", "8 박시윤", 
+            "9 성윤우", "10 신재인", "11 우찬희", "12 윤연제", "13 이다나", "14 이도윤", "15 이서아",
+            "16 이연우", "17 임수호", "18 정서윤", "19 정서진", "20 조주원", "21 주현우", 
+            "22 지소율", "23 최예원", "24 최지우", "25 최환준", "26 황혜원"
+        ];
+
+        // 학생 선택 드롭다운 업데이트
+        function updateStudentSelect() {
+            const studentSelect = document.getElementById('studentSelect');
+            studentSelect.innerHTML = '<option value="">자녀를 선택하세요</option>';
+            
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student;
+                option.textContent = student;
+                studentSelect.appendChild(option);
+            });
+        }
+
+        // 계정 목록 업데이트
+        function updateAccountList() {
+            const accountList = document.getElementById('accountList');
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+            
+            accountList.innerHTML = '';
+            
+            Object.entries(accounts).forEach(([username, account]) => {
+                if (account.role !== 'teacher') {
+                    const accountItem = document.createElement('div');
+                    accountItem.className = 'account-item';
+                    accountItem.innerHTML = `
+                        <span>${account.name} (${account.role})</span>
+                        <button class="delete-btn" onclick="deleteAccount('${username}')">삭제</button>
+                    `;
+                    accountList.appendChild(accountItem);
+                }
+            });
+        }
+
+        // 학생 계정 생성
+        document.getElementById('createStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('studentId').value;
+            const name = document.getElementById('studentName').value;
+            const password = document.getElementById('studentPassword').value;
+            
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+            
+            if (accounts[id]) {
+                alert('이미 존재하는 학번입니다.');
+                return;
+            }
+            
+            accounts[id] = {
+                password: password,
+                role: 'student',
+                name: name
+            };
+            
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            updateAccountList();
+            updateStudentSelect();
+            
+            this.reset();
+            alert('학생 계정이 생성되었습니다.');
+        });
+
+        // 학부모 계정 생성
+        document.getElementById('createParentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('parentId').value;
+            const name = document.getElementById('parentName').value;
+            const password = document.getElementById('parentPassword').value;
+            const student = document.getElementById('studentSelect').value;
+            
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+            
+            if (accounts[id]) {
+                alert('이미 존재하는 아이디입니다.');
+                return;
+            }
+            
+            accounts[id] = {
+                password: password,
+                role: 'parent',
+                name: name,
+                student: student
+            };
+            
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            updateAccountList();
+            
+            this.reset();
+            alert('학부모 계정이 생성되었습니다.');
+        });
+
+        // 계정 삭제
+        function deleteAccount(username) {
+            if (confirm('정말로 이 계정을 삭제하시겠습니까?')) {
+                const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+                delete accounts[username];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                updateAccountList();
+                updateStudentSelect();
+            }
+        }
+
+        // 로그아웃
+        function logout() {
+            localStorage.removeItem('currentUser');
+        }
+
+        // 초기화
+        updateStudentSelect();
+        updateAccountList();
+    </script>
+</body>
+</html> 
