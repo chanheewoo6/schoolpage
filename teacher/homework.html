@@ -13,12 +13,16 @@
   </header>
   <main>
     <div class="card">
+      <h4>숙제 관리</h4>
+      <form id="homeworkForm">
+        <input type="text" id="homeworkInput" placeholder="새로운 숙제를 입력하세요" required>
+        <button type="submit">추가</button>
+      </form>
+      <ul id="homeworkList"></ul>
+    </div>
+    <div class="card">
       <h4>숙제별 미제출 학생</h4>
-      <ul>
-        <li>살글: <span id="not1"></span></li>
-        <li>느티나무: <span id="not2"></span></li>
-        <li>꿈자람: <span id="not3"></span></li>
-      </ul>
+      <ul id="notDoneList"></ul>
     </div>
   </main>
   <script>
@@ -27,6 +31,7 @@
     if (!currentUser || currentUser.role !== 'teacher') {
       window.location.href = '../login.html';
     }
+
     // 학생 목록
     const students = [
       "고하준", "김도현", "김민채", "김준우", "김찬우", "문서호", "박시연", "박시윤",
@@ -34,17 +39,77 @@
       "이연우", "임수호", "정서윤", "정서진", "조주원", "주현우",
       "지소율", "최예원", "최지우", "최환준", "황혜원"
     ];
+
     // 숙제 데이터
     const today = new Date().toISOString().slice(0, 10);
     let homework = JSON.parse(localStorage.getItem('homework')) || {};
     if (!homework[today]) homework[today] = {};
-    // 미제출 학생 집계
-    function getNotDone(idx) {
-      return students.filter(name => !homework[today][name] || !homework[today][name][idx]).join(', ') || '없음';
+    if (!homework[today].tasks) homework[today].tasks = [];
+    if (!homework[today].status) homework[today].status = {};
+
+    // 숙제 목록 렌더링
+    function renderHomeworkList() {
+      const list = document.getElementById('homeworkList');
+      list.innerHTML = '';
+      homework[today].tasks.forEach((task, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${task} <button onclick='deleteHomework(${idx})'>삭제</button>`;
+        list.appendChild(li);
+      });
     }
-    document.getElementById('not1').textContent = getNotDone(0);
-    document.getElementById('not2').textContent = getNotDone(1);
-    document.getElementById('not3').textContent = getNotDone(2);
+
+    // 미제출 학생 목록 렌더링
+    function renderNotDoneList() {
+      const list = document.getElementById('notDoneList');
+      list.innerHTML = '';
+      homework[today].tasks.forEach((task, taskIdx) => {
+        const notDone = students.filter(name => 
+          !homework[today].status[name] || !homework[today].status[name][taskIdx]
+        );
+        const li = document.createElement('li');
+        li.textContent = `${task}: ${notDone.length ? notDone.join(', ') : '없음'}`;
+        list.appendChild(li);
+      });
+    }
+
+    // 숙제 추가
+    document.getElementById('homeworkForm').onsubmit = function(e) {
+      e.preventDefault();
+      const task = document.getElementById('homeworkInput').value.trim();
+      if (task) {
+        homework[today].tasks.push(task);
+        // 모든 학생의 상태 배열 업데이트
+        students.forEach(name => {
+          if (!homework[today].status[name]) {
+            homework[today].status[name] = new Array(homework[today].tasks.length).fill(false);
+          } else {
+            homework[today].status[name].push(false);
+          }
+        });
+        localStorage.setItem('homework', JSON.stringify(homework));
+        renderHomeworkList();
+        renderNotDoneList();
+        this.reset();
+      }
+    };
+
+    // 숙제 삭제
+    window.deleteHomework = function(idx) {
+      homework[today].tasks.splice(idx, 1);
+      // 모든 학생의 상태 배열 업데이트
+      students.forEach(name => {
+        if (homework[today].status[name]) {
+          homework[today].status[name].splice(idx, 1);
+        }
+      });
+      localStorage.setItem('homework', JSON.stringify(homework));
+      renderHomeworkList();
+      renderNotDoneList();
+    };
+
+    // 초기 렌더링
+    renderHomeworkList();
+    renderNotDoneList();
   </script>
 </body>
 </html> 

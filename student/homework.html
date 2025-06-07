@@ -15,20 +15,14 @@
     <div class="card">
       <h4 id="studentName"></h4>
       <form id="homeworkForm">
-        <label><input type="checkbox" id="hw1"> 살글</label><br>
-        <label><input type="checkbox" id="hw2"> 느티나무</label><br>
-        <label><input type="checkbox" id="hw3"> 꿈자람</label><br>
+        <div id="homeworkList"></div>
         <button type="submit">저장</button>
       </form>
       <div id="saveMsg"></div>
     </div>
     <div class="card">
       <h4>숙제 완료 인원</h4>
-      <ul>
-        <li>살글: <span id="count1">0</span>명</li>
-        <li>느티나무: <span id="count2">0</span>명</li>
-        <li>꿈자람: <span id="count3">0</span>명</li>
-      </ul>
+      <ul id="countList"></ul>
     </div>
   </main>
   <script>
@@ -43,39 +37,53 @@
     const today = new Date().toISOString().slice(0, 10);
     let homework = JSON.parse(localStorage.getItem('homework')) || {};
     if (!homework[today]) homework[today] = {};
-    if (!homework[today][currentUser.name]) homework[today][currentUser.name] = [false, false, false];
+    if (!homework[today].tasks) homework[today].tasks = [];
+    if (!homework[today].status) homework[today].status = {};
+    if (!homework[today].status[currentUser.name]) {
+      homework[today].status[currentUser.name] = new Array(homework[today].tasks.length).fill(false);
+    }
 
-    // 체크박스 상태 반영
-    const [hw1, hw2, hw3] = homework[today][currentUser.name];
-    document.getElementById('hw1').checked = hw1;
-    document.getElementById('hw2').checked = hw2;
-    document.getElementById('hw3').checked = hw3;
+    // 숙제 목록 렌더링
+    function renderHomeworkList() {
+      const list = document.getElementById('homeworkList');
+      list.innerHTML = '';
+      homework[today].tasks.forEach((task, idx) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <label>
+            <input type="checkbox" id="hw${idx}" ${homework[today].status[currentUser.name][idx] ? 'checked' : ''}>
+            ${task}
+          </label>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    // 완료 인원 집계
+    function updateCounts() {
+      const list = document.getElementById('countList');
+      list.innerHTML = '';
+      homework[today].tasks.forEach((task, taskIdx) => {
+        const count = Object.values(homework[today].status).filter(status => status[taskIdx]).length;
+        const li = document.createElement('li');
+        li.textContent = `${task}: ${count}명`;
+        list.appendChild(li);
+      });
+    }
 
     // 저장 이벤트
     document.getElementById('homeworkForm').onsubmit = function(e) {
       e.preventDefault();
-      homework[today][currentUser.name] = [
-        document.getElementById('hw1').checked,
-        document.getElementById('hw2').checked,
-        document.getElementById('hw3').checked
-      ];
+      homework[today].status[currentUser.name] = homework[today].tasks.map((_, idx) => 
+        document.getElementById(`hw${idx}`).checked
+      );
       localStorage.setItem('homework', JSON.stringify(homework));
       document.getElementById('saveMsg').textContent = '저장되었습니다!';
       updateCounts();
     };
 
-    // 완료 인원 집계
-    function updateCounts() {
-      let count1 = 0, count2 = 0, count3 = 0;
-      for (const student in homework[today]) {
-        if (homework[today][student][0]) count1++;
-        if (homework[today][student][1]) count2++;
-        if (homework[today][student][2]) count3++;
-      }
-      document.getElementById('count1').textContent = count1;
-      document.getElementById('count2').textContent = count2;
-      document.getElementById('count3').textContent = count3;
-    }
+    // 초기 렌더링
+    renderHomeworkList();
     updateCounts();
   </script>
 </body>
